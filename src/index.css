@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900;
+    font-family: Georgia, serif;
+  }
+}
+
+@layer components {
+  .nyt-container {
+    @apply max-w-4xl mx-auto px-4 py-8;
+  }
+  
+  .nyt-header {
+    @apply text-4xl font-bold mb-8 text-center;
+    font-family: Georgia, serif;
+  }
+  
+  .nyt-section {
+    @apply mb-12;
+  }
+  
+  .nyt-section-title {
+    @apply text-2xl font-bold mb-6 border-b border-gray-300 pb-2;
+    font-family: Georgia, serif;
+  }
+  
+  .nyt-card {
+    @apply bg-white p-6 mb-6 border border-gray-200 hover:border-gray-400 transition-colors duration-200;
+  }
+  
+  .nyt-card-title {
+    @apply text-xl font-bold mb-2 text-gray-900;
+    font-family: Georgia, serif;
+  }
+  
+  .nyt-card-description {
+    @apply text-gray-700 leading-relaxed;
+    font-family: Georgia, serif;
+  }
+  
+  .nyt-branch {
+    @apply inline-block px-3 py-1 text-sm font-medium text-red-700 bg-red-50 rounded-full mb-3;
+    font-family: Georgia, serif;
+  }
+  
+  .nyt-icon {
+    @apply text-red-700 mb-3;
+  }
+}
