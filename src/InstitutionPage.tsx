@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { BookOpen, Shield, Globe2, Landmark, BadgeDollarSign, Stethoscope, Scale as SecurityIcon, Square as GavelSquare } from 'lucide-react';
+import { BookOpen, Shield, Globe2, Landmark, BadgeDollarSign, Stethoscope, Scale as SecurityIcon, Square as GavelSquare, Calendar, Newspaper } from 'lucide-react';
 
 interface Institution {
   name: string;
@@ -12,6 +12,19 @@ interface Institution {
     headquarters: string;
     keyResponsibilities: string[];
     recentNews: string[];
+    history?: string;
+    imageUrl?: string;
+    upcomingEvents?: {
+      date: string;
+      title: string;
+      description: string;
+    }[];
+    newsFeed?: {
+      title: string;
+      source: string;
+      timestamp: string;
+      url: string;
+    }[];
   };
 }
 
@@ -34,6 +47,45 @@ const institutions: Institution[] = [
         "New bipartisan infrastructure bill introduced",
         "Senate confirms new Supreme Court justice",
         "House passes defense spending bill"
+      ],
+      history: "The United States Congress was established by the Constitution in 1789, making it one of the oldest legislative bodies in the world. It was created as a bicameral legislature with the House of Representatives and the Senate, designed to balance the interests of both large and small states. The first Congress convened in New York City in 1789, with George Washington being inaugurated as the first President. Over the centuries, Congress has played a crucial role in shaping American democracy, from passing the Bill of Rights in 1791 to major legislative achievements like the Civil Rights Act of 1964 and the Affordable Care Act of 2010. The Capitol Building, where Congress meets, has become an enduring symbol of American democracy.",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/US_Capitol_west_side.JPG/1280px-US_Capitol_west_side.JPG",
+      upcomingEvents: [
+        {
+          date: "2024-03-20",
+          title: "House Judiciary Committee Hearing",
+          description: "Oversight hearing on federal law enforcement"
+        },
+        {
+          date: "2024-03-22",
+          title: "Senate Foreign Relations Committee Meeting",
+          description: "Discussion on international security policy"
+        },
+        {
+          date: "2024-03-25",
+          title: "Joint Session",
+          description: "State of the Union address"
+        }
+      ],
+      newsFeed: [
+        {
+          title: "Congress Passes Major Spending Bill",
+          source: "Reuters",
+          timestamp: "2 hours ago",
+          url: "#"
+        },
+        {
+          title: "Senate Committee Advances Judicial Nomination",
+          source: "AP News",
+          timestamp: "4 hours ago",
+          url: "#"
+        },
+        {
+          title: "House Speaker Announces New Legislative Priorities",
+          source: "Politico",
+          timestamp: "6 hours ago",
+          url: "#"
+        }
       ]
     }
   },
@@ -86,6 +138,25 @@ function InstitutionPage() {
         <h1 className="nyt-card-title text-3xl mb-4">{institution.name}</h1>
         <p className="nyt-card-description text-lg mb-8">{institution.description}</p>
 
+        {/* History Section */}
+        {institution.details.history && (
+          <section className="mb-12">
+            <h2 className="nyt-section-title">History</h2>
+            <p className="nyt-card-description leading-relaxed">{institution.details.history}</p>
+          </section>
+        )}
+
+        {/* Image Section */}
+        {institution.details.imageUrl && (
+          <section className="mb-12">
+            <img 
+              src={institution.details.imageUrl} 
+              alt={`${institution.name} building`}
+              className="w-full h-auto rounded-lg shadow-md"
+            />
+          </section>
+        )}
+
         <div className="grid gap-8">
           <section>
             <h2 className="nyt-section-title">Overview</h2>
@@ -110,16 +181,47 @@ function InstitutionPage() {
             </ul>
           </section>
 
-          <section>
-            <h2 className="nyt-section-title">Recent News</h2>
-            <ul className="space-y-4">
-              {institution.details.recentNews.map((news, index) => (
-                <li key={index} className="border-b border-gray-200 pb-4 last:border-0">
-                  {news}
-                </li>
-              ))}
-            </ul>
-          </section>
+          {/* Upcoming Events Section */}
+          {institution.details.upcomingEvents && (
+            <section>
+              <h2 className="nyt-section-title flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Events to Watch
+              </h2>
+              <div className="space-y-4">
+                {institution.details.upcomingEvents.map((event, index) => (
+                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                    <div className="text-sm text-red-700 mb-1">{event.date}</div>
+                    <h3 className="font-bold mb-1">{event.title}</h3>
+                    <p className="text-gray-700">{event.description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* News Feed Section */}
+          {institution.details.newsFeed && (
+            <section>
+              <h2 className="nyt-section-title flex items-center gap-2">
+                <Newspaper className="w-5 h-5" />
+                Latest News
+              </h2>
+              <div className="space-y-4">
+                {institution.details.newsFeed.map((news, index) => (
+                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold hover:text-red-700">
+                        <a href={news.url}>{news.title}</a>
+                      </h3>
+                      <span className="text-sm text-gray-500">{news.timestamp}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">{news.source}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>
