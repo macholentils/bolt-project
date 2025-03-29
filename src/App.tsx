@@ -1,5 +1,7 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { BookOpen, Shield, Globe2, Landmark, BadgeDollarSign, Stethoscope, Scale as SecurityIcon, Square as GavelSquare } from 'lucide-react';
+import InstitutionPage from './InstitutionPage';
 
 interface Institution {
   name: string;
@@ -8,7 +10,7 @@ interface Institution {
   description: string;
 }
 
-function App() {
+function HomePage() {
   const institutions: Institution[] = [
     {
       name: "Congress",
@@ -75,18 +77,33 @@ function App() {
             <h2 className="nyt-section-title">{branch} Branch</h2>
             <div className="grid gap-6">
               {branchInstitutions.map((institution, index) => (
-                <div key={index} className="nyt-card">
+                <Link 
+                  key={index} 
+                  to={`/institution/${institution.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="nyt-card block hover:border-red-700 transition-colors duration-200"
+                >
                   <div className="nyt-icon">{institution.icon}</div>
                   <div className="nyt-branch">{institution.branch}</div>
                   <h3 className="nyt-card-title">{institution.name}</h3>
                   <p className="nyt-card-description">{institution.description}</p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
         );
       })}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/institution/:institutionName" element={<InstitutionPage />} />
+      </Routes>
+    </Router>
   );
 }
 
