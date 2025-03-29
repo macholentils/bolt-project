@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { BookOpen, Shield, Globe2, Landmark, BadgeDollarSign, Stethoscope, Scale as SecurityIcon, Square as GavelSquare, Calendar, Newspaper } from 'lucide-react';
+import { BookOpen, Shield, Globe2, Landmark, BadgeDollarSign, Stethoscope, Scale as SecurityIcon, Square as GavelSquare, Calendar } from 'lucide-react';
 
 interface Institution {
   name: string;
@@ -11,19 +11,11 @@ interface Institution {
     founded: string;
     headquarters: string;
     keyResponsibilities: string[];
-    recentNews: string[];
     history?: string;
-    imageUrl?: string;
     upcomingEvents?: {
       date: string;
       title: string;
       description: string;
-    }[];
-    newsFeed?: {
-      title: string;
-      source: string;
-      timestamp: string;
-      url: string;
     }[];
   };
 }
@@ -43,13 +35,7 @@ const institutions: Institution[] = [
         "Regulating interstate and foreign commerce",
         "Controlling taxing and spending policies"
       ],
-      recentNews: [
-        "New bipartisan infrastructure bill introduced",
-        "Senate confirms new Supreme Court justice",
-        "House passes defense spending bill"
-      ],
       history: "The United States Congress was established by the Constitution in 1789, making it one of the oldest legislative bodies in the world. It was created as a bicameral legislature with the House of Representatives and the Senate, designed to balance the interests of both large and small states. The first Congress convened in New York City in 1789, with George Washington being inaugurated as the first President. Over the centuries, Congress has played a crucial role in shaping American democracy, from passing the Bill of Rights in 1791 to major legislative achievements like the Civil Rights Act of 1964 and the Affordable Care Act of 2010. The Capitol Building, where Congress meets, has become an enduring symbol of American democracy.",
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/US_Capitol_west_side.JPG/1280px-US_Capitol_west_side.JPG",
       upcomingEvents: [
         {
           date: "2024-03-20",
@@ -65,26 +51,6 @@ const institutions: Institution[] = [
           date: "2024-03-25",
           title: "Joint Session",
           description: "State of the Union address"
-        }
-      ],
-      newsFeed: [
-        {
-          title: "Congress Passes Major Spending Bill",
-          source: "Reuters",
-          timestamp: "2 hours ago",
-          url: "#"
-        },
-        {
-          title: "Senate Committee Advances Judicial Nomination",
-          source: "AP News",
-          timestamp: "4 hours ago",
-          url: "#"
-        },
-        {
-          title: "House Speaker Announces New Legislative Priorities",
-          source: "Politico",
-          timestamp: "6 hours ago",
-          url: "#"
         }
       ]
     }
@@ -102,11 +68,6 @@ const institutions: Institution[] = [
         "Defense policy",
         "National security",
         "Military personnel management"
-      ],
-      recentNews: [
-        "New defense strategy announced",
-        "Joint military exercises completed",
-        "Defense budget proposal released"
       ]
     }
   }
@@ -115,7 +76,6 @@ const institutions: Institution[] = [
 function InstitutionPage() {
   const { institutionName } = useParams<{ institutionName: string }>();
   
-  // Find the institution and handle the case where it's not found
   const institution = institutions.find(inst => 
     inst.name.toLowerCase().replace(/\s+/g, '-') === institutionName
   );
@@ -129,7 +89,6 @@ function InstitutionPage() {
     );
   }
 
-  // Helper function to safely render optional sections
   const renderSection = (title: React.ReactNode, content: React.ReactNode) => (
     <section className="mb-8">
       <h2 className="nyt-section-title">{title}</h2>
@@ -151,20 +110,6 @@ function InstitutionPage() {
         {institution.details.history && renderSection(
           "History",
           <p className="nyt-card-description leading-relaxed">{institution.details.history}</p>
-        )}
-
-        {/* Image Section */}
-        {institution.details.imageUrl && renderSection(
-          "Location",
-          <img 
-            src={institution.details.imageUrl} 
-            alt={`${institution.name} building`}
-            className="w-full h-auto rounded-lg shadow-md"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
-          />
         )}
 
         {/* Overview Section */}
@@ -204,27 +149,6 @@ function InstitutionPage() {
                 <div className="text-sm text-red-700 mb-1">{event.date}</div>
                 <h3 className="font-bold mb-1">{event.title}</h3>
                 <p className="text-gray-700">{event.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* News Feed Section */}
-        {institution.details.newsFeed && renderSection(
-          <div className="flex items-center gap-2">
-            <Newspaper className="w-5 h-5" />
-            Latest News
-          </div>,
-          <div className="space-y-4">
-            {institution.details.newsFeed.map((news, index) => (
-              <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold hover:text-red-700">
-                    <a href={news.url}>{news.title}</a>
-                  </h3>
-                  <span className="text-sm text-gray-500">{news.timestamp}</span>
-                </div>
-                <div className="text-sm text-gray-600">{news.source}</div>
               </div>
             ))}
           </div>
