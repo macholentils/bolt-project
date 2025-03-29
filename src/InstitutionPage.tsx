@@ -109,12 +109,13 @@ const institutions: Institution[] = [
         "Defense budget proposal released"
       ]
     }
-  },
-  // Add more institutions here...
+  }
 ];
 
 function InstitutionPage() {
   const { institutionName } = useParams<{ institutionName: string }>();
+  
+  // Find the institution and handle the case where it's not found
   const institution = institutions.find(inst => 
     inst.name.toLowerCase().replace(/\s+/g, '-') === institutionName
   );
@@ -128,6 +129,14 @@ function InstitutionPage() {
     );
   }
 
+  // Helper function to safely render optional sections
+  const renderSection = (title: React.ReactNode, content: React.ReactNode) => (
+    <section className="mb-8">
+      <h2 className="nyt-section-title">{title}</h2>
+      {content}
+    </section>
+  );
+
   return (
     <div className="nyt-container">
       <Link to="/" className="text-red-700 hover:text-red-900 mb-8 inline-block">← Back to Home</Link>
@@ -139,90 +148,87 @@ function InstitutionPage() {
         <p className="nyt-card-description text-lg mb-8">{institution.description}</p>
 
         {/* History Section */}
-        {institution.details.history && (
-          <section className="mb-12">
-            <h2 className="nyt-section-title">History</h2>
-            <p className="nyt-card-description leading-relaxed">{institution.details.history}</p>
-          </section>
+        {institution.details.history && renderSection(
+          "History",
+          <p className="nyt-card-description leading-relaxed">{institution.details.history}</p>
         )}
 
         {/* Image Section */}
-        {institution.details.imageUrl && (
-          <section className="mb-12">
-            <img 
-              src={institution.details.imageUrl} 
-              alt={`${institution.name} building`}
-              className="w-full h-auto rounded-lg shadow-md"
-            />
-          </section>
+        {institution.details.imageUrl && renderSection(
+          "Location",
+          <img 
+            src={institution.details.imageUrl} 
+            alt={`${institution.name} building`}
+            className="w-full h-auto rounded-lg shadow-md"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
         )}
 
-        <div className="grid gap-8">
-          <section>
-            <h2 className="nyt-section-title">Overview</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-bold mb-2">Founded</h3>
-                <p>{institution.details.founded}</p>
-              </div>
-              <div>
-                <h3 className="font-bold mb-2">Headquarters</h3>
-                <p>{institution.details.headquarters}</p>
-              </div>
+        {/* Overview Section */}
+        {renderSection(
+          "Overview",
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-bold mb-2">Founded</h3>
+              <p>{institution.details.founded}</p>
             </div>
-          </section>
+            <div>
+              <h3 className="font-bold mb-2">Headquarters</h3>
+              <p>{institution.details.headquarters}</p>
+            </div>
+          </div>
+        )}
 
-          <section>
-            <h2 className="nyt-section-title">Key Responsibilities</h2>
-            <ul className="list-disc pl-6 space-y-2">
-              {institution.details.keyResponsibilities.map((resp, index) => (
-                <li key={index}>{resp}</li>
-              ))}
-            </ul>
-          </section>
+        {/* Key Responsibilities Section */}
+        {renderSection(
+          "Key Responsibilities",
+          <ul className="list-disc pl-6 space-y-2">
+            {institution.details.keyResponsibilities.map((resp, index) => (
+              <li key={index}>{resp}</li>
+            ))}
+          </ul>
+        )}
 
-          {/* Upcoming Events Section */}
-          {institution.details.upcomingEvents && (
-            <section>
-              <h2 className="nyt-section-title flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Events to Watch
-              </h2>
-              <div className="space-y-4">
-                {institution.details.upcomingEvents.map((event, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
-                    <div className="text-sm text-red-700 mb-1">{event.date}</div>
-                    <h3 className="font-bold mb-1">{event.title}</h3>
-                    <p className="text-gray-700">{event.description}</p>
-                  </div>
-                ))}
+        {/* Upcoming Events Section */}
+        {institution.details.upcomingEvents && renderSection(
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Events to Watch
+          </div>,
+          <div className="space-y-4">
+            {institution.details.upcomingEvents.map((event, index) => (
+              <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                <div className="text-sm text-red-700 mb-1">{event.date}</div>
+                <h3 className="font-bold mb-1">{event.title}</h3>
+                <p className="text-gray-700">{event.description}</p>
               </div>
-            </section>
-          )}
+            ))}
+          </div>
+        )}
 
-          {/* News Feed Section */}
-          {institution.details.newsFeed && (
-            <section>
-              <h2 className="nyt-section-title flex items-center gap-2">
-                <Newspaper className="w-5 h-5" />
-                Latest News
-              </h2>
-              <div className="space-y-4">
-                {institution.details.newsFeed.map((news, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold hover:text-red-700">
-                        <a href={news.url}>{news.title}</a>
-                      </h3>
-                      <span className="text-sm text-gray-500">{news.timestamp}</span>
-                    </div>
-                    <div className="text-sm text-gray-600">{news.source}</div>
-                  </div>
-                ))}
+        {/* News Feed Section */}
+        {institution.details.newsFeed && renderSection(
+          <div className="flex items-center gap-2">
+            <Newspaper className="w-5 h-5" />
+            Latest News
+          </div>,
+          <div className="space-y-4">
+            {institution.details.newsFeed.map((news, index) => (
+              <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold hover:text-red-700">
+                    <a href={news.url}>{news.title}</a>
+                  </h3>
+                  <span className="text-sm text-gray-500">{news.timestamp}</span>
+                </div>
+                <div className="text-sm text-gray-600">{news.source}</div>
               </div>
-            </section>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
